@@ -8,4 +8,3 @@ const config_1 = __importDefault(require("./config"));
 app_1.default.listen(config_1.default.port, () => {
     console.log(`🚀 Listening on ${config_1.default.port} with NODE_ENV=${config_1.default.nodeEnv} 🚀`);
 });
-exports.default = app_1.default;
