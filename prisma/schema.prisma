@@ -43,7 +43,7 @@ model Route {
   id            Int          @id @default(autoincrement())
   startLocation String
   endLocation   String
-  pickupTime    DateTime     @db.Time()
+  pickupTime    Int
   startDate     DateTime     @db.Date()
   cabRequests   CabRequest[]
   expireDate    DateTime

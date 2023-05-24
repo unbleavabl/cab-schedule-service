@@ -7,6 +7,16 @@ import {
 } from "../services/cabRequest.service";
 
 export const cabRequestController = (router: Router) => {
+  router.get("/v1/cab-request", async (req, res, next) => {
+    try {
+      const result = await getCabRequests();
+
+      res.status(200).send(result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get("/v1/cab-request/employee/:employeeId", async (req, res, next) => {
     try {
       const { employeeId } = req.params;

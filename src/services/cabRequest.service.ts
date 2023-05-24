@@ -20,7 +20,7 @@ export type UpdateCabRequest = {
 };
 
 export type GetCabRequests = {
-  filters: {
+  filters?: {
     employeeId?: string;
     routeId?: number;
     status?: string;
@@ -75,14 +75,16 @@ export const updateCabRequest = async ({
   return result;
 };
 
-export const getCabRequests = async ({
-  filters: { employeeId, routeId, status },
-}: GetCabRequests) => {
+export const getCabRequests = async (opts?: GetCabRequests) => {
+  const { employeeId, routeId, status } = opts?.filters ?? {};
   const result = await prisma.cabRequest.findMany({
     where: {
       employeeId,
       routeId,
       status,
+      pickupTime: {
+        gte: (new Date()).toISOString()
+      }
     },
   });
   return result;

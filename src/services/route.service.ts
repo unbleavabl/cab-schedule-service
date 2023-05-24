@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma";
+import { transformMinutesToTimeString, transformTimeStringToMinutes } from "../lib/dateTime";
 
 export type GetRoutes = {
   filters?: {
@@ -39,7 +40,6 @@ export type VehicleWithVendorId = VehicleRequired & {
 
 export type VehicleWithVendorData = VehicleRequired & {
   vendor: {
-    id: number;
     name: string;
   };
 };
@@ -65,6 +65,13 @@ const hasVendorId = (
   return !!(vehicleObj as VehicleWithVendorId).vendorId;
 };
 
+const createResponse = (result: {pickupTime: number}) => {
+  return {
+    ...result,
+    pickupTime: transformMinutesToTimeString(result.pickupTime)
+  }
+}
+
 export const getRoutes = async (opts?: GetRoutes) => {
   const id = opts?.filters?.id;
   const date = opts?.filters?.date;
@@ -80,34 +87,36 @@ export const getRoutes = async (opts?: GetRoutes) => {
     },
   });
 
-  return result;
+  return result.map(createResponse);
 };
 
 export const createRoute = async (createRouteRequest: CreateRoute) => {
   const { startDate, expireDate, startLocation, endLocation, pickupTime } =
     createRouteRequest;
+  const updatedStartDate = new Date(startDate).toISOString();
+  const updatedExpireDate = new Date(expireDate).toISOString();
   if (hasVehicleId(createRouteRequest)) {
     const result = await prisma.route.create({
       data: {
-        startDate,
-        expireDate,
+        startDate: updatedStartDate,
+        expireDate: updatedExpireDate,
         startLocation,
         endLocation,
-        pickupTime,
+        pickupTime: transformTimeStringToMinutes(pickupTime),
         vehicleId: createRouteRequest.vehicleId,
       },
     });
-    return result;
+    return createResponse(result);
   }
 
   if (hasVendorId(createRouteRequest.vehicle)) {
     const result = await prisma.route.create({
       data: {
-        startDate,
-        expireDate,
+        startDate: updatedStartDate,
+        expireDate: updatedExpireDate,
         startLocation,
         endLocation,
-        pickupTime,
+        pickupTime: transformTimeStringToMinutes(pickupTime),
         vehicle: {
           create: {
             ...createRouteRequest.vehicle,
@@ -115,16 +124,16 @@ export const createRoute = async (createRouteRequest: CreateRoute) => {
         },
       },
     });
-    return result;
+    return createResponse(result);
   }
 
   const result = await prisma.route.create({
     data: {
-      startDate,
-      expireDate,
+      startDate: updatedStartDate,
+      expireDate: updatedExpireDate,
       startLocation,
       endLocation,
-      pickupTime,
+      pickupTime: transformTimeStringToMinutes(pickupTime),
       vehicle: {
         create: {
           ...createRouteRequest.vehicle,
@@ -137,7 +146,7 @@ export const createRoute = async (createRouteRequest: CreateRoute) => {
       },
     },
   });
-  return result;
+  return createResponse(result);
 };
 
 export const updateRoute = async ({
@@ -155,17 +164,17 @@ export const updateRoute = async ({
     data: {
       startDate,
       expireDate,
-      pickupTime,
+      pickupTime: pickupTime
+        ? transformTimeStringToMinutes(pickupTime)
+        : undefined,
       startLocation,
       endLocation,
     },
   });
-  return result;
+  return createResponse(result);
 };
 
-export const deleteRoute = async ({
-  id,
-}: DeleteRoute) => {
+export const deleteRoute = async ({ id }: DeleteRoute) => {
   const result = await prisma.route.delete({
     where: {
       id,
