@@ -2,6 +2,7 @@ import prisma from "../lib/prisma";
 
 export type CreateCabRequest = {
   employeeId: string;
+  employeeName: string;
   pickupLocation: string;
   dropLocation: string;
   pickupTime: string;
@@ -9,6 +10,8 @@ export type CreateCabRequest = {
 
 export type UpdateCabRequest = {
   id: number;
+  employeeId: string;
+  employeeName: string;
   pickupLocation?: string;
   dropLocation?: string;
   pickupTime?: string;
@@ -25,6 +28,7 @@ export type GetCabRequests = {
 };
 
 export const createCabRequest = async ({
+  employeeName,
   employeeId,
   pickupLocation,
   dropLocation,
@@ -32,6 +36,7 @@ export const createCabRequest = async ({
 }: CreateCabRequest) => {
   const result = await prisma.cabRequest.create({
     data: {
+      employeeName,
       employeeId,
       pickupLocation,
       dropLocation,
@@ -45,6 +50,8 @@ export const createCabRequest = async ({
 
 export const updateCabRequest = async ({
   id,
+  employeeName,
+  employeeId,
   pickupLocation,
   dropLocation,
   pickupTime,
@@ -56,6 +63,8 @@ export const updateCabRequest = async ({
       id,
     },
     data: {
+      employeeName,
+      employeeId,
       pickupLocation,
       dropLocation,
       pickupTime,
