@@ -4,7 +4,7 @@ export const transformTimeStringToMinutes = (timeString: string) => {
 };
 
 export const transformMinutesToTimeString = (minutes: number) => {
-  const hrs = Math.floor(minutes / 60);
-  const remainingMins = minutes % 60;
+  const hrs = Math.floor(minutes / 60).toString().padStart(2, '0');
+  const remainingMins = (minutes % 60).toString().padStart(2, '0');
   return `${hrs}:${remainingMins}`;
 };

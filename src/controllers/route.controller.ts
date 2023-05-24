@@ -26,7 +26,7 @@ export const routeController = (router: Router) => {
     }
   });
 
-  router.post("/v1/route/create", async (req, res, next) => {
+  router.post("/v1/route", async (req, res, next) => {
     try {
       const body = req.body;
       const result = await createRoute({
@@ -44,7 +44,7 @@ export const routeController = (router: Router) => {
     }
   });
 
-  router.post("v1/route/update/:routeId", async (req, res, next) => {
+  router.put("v1/route/:routeId", async (req, res, next) => {
     try {
       const body = req.body;
       const { routeId } = req.params;

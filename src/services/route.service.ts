@@ -85,6 +85,13 @@ export const getRoutes = async (opts?: GetRoutes) => {
         gte: date,
       },
     },
+    include: {
+      vehicle: {
+        include: {
+          vendor: true
+        }
+      }
+    }
   });
 
   return result.map(createResponse);

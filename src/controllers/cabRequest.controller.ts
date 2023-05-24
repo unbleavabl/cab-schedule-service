@@ -32,7 +32,28 @@ export const cabRequestController = (router: Router) => {
     }
   });
 
-  router.post("/v1/cab-request/create", async (req, res, next) => {
+  router.put("/v1/cab-request/:id", async (req, res, next) => {
+    try {
+      const { body } = req;
+      const { id } = req.params;
+      const result = await updateCabRequest({
+        id: parseInt(id),
+        employeeId: body.employeeId,
+        employeeName: body.employeeName,
+        pickupLocation: body.pickupLocation,
+        dropLocation: body.dropLocation,
+        pickupTime: body.pickupTime,
+        status: body.status,
+        routeId: body.routeId,
+      });
+
+      res.status(200).send(result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post("/v1/cab-request", async (req, res, next) => {
     try {
       const { body } = req;
       const result = await createCabRequest({
@@ -49,23 +70,4 @@ export const cabRequestController = (router: Router) => {
     }
   });
 
-  router.post("/v1/cab-request/update", async (req, res, next) => {
-    try {
-      const { body } = req;
-      const result = await updateCabRequest({
-        id: body.id,
-        employeeId: body.employeeId,
-        employeeName: body.employeeName,
-        pickupLocation: body.pickupLocation,
-        dropLocation: body.dropLocation,
-        pickupTime: body.pickupTime,
-        status: body.status,
-        routeId: body.routeId,
-      });
-
-      res.status(200).send(result);
-    } catch (err) {
-      next(err);
-    }
-  });
 };
